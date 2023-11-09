@@ -1,16 +1,32 @@
-package reponses;
+package responses;
 
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
-
-import java.util.ArrayList;
 
 public class PetRes {
-    public int getId() {
+    private long id;
+    private Category category;
+    private String name;
+    private String[] photoUrls;
+    private Tag[] tags;
+    private String status;
+
+    public PetRes() {
+    }
+
+    public PetRes(long id, Category category, String name, String[] photoUrls, Tag[] tags, String status) {
+        this.id = id;
+        this.category = category;
+        this.name = name;
+        this.photoUrls = photoUrls;
+        this.tags = tags;
+        this.status = status;
+    }
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -30,19 +46,19 @@ public class PetRes {
         this.name = name;
     }
 
-    public ArrayList<String> getPhotoUrls() {
+    public String[] getPhotoUrls() {
         return photoUrls;
     }
 
-    public void setPhotoUrls(ArrayList<String> photoUrls) {
+    public void setPhotoUrls(String[] photoUrls) {
         this.photoUrls = photoUrls;
     }
 
-    public ArrayList<Tag> getTags() {
+    public Tag[] getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<Tag> tags) {
+    public void setTags(Tag[] tags) {
         this.tags = tags;
     }
 
@@ -54,39 +70,73 @@ public class PetRes {
         this.status = status;
     }
 
-    public Response getResponse() {
+    public static class Category {
+        private long id;
+        private String name;
+
+        public Category() {
+        }
+
+        public Category(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class Tag {
+        private long id;
+        private String name;
+
+        public Tag() {
+        }
+
+        public Tag(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public  Response getPetResponse(Response response) {
+        this.id = response.jsonPath().getLong("id");
+        this.category = response.jsonPath().getObject("category", Category.class);
+        this.name = response.jsonPath().getString("name");
+        this.photoUrls = response.jsonPath().getObject("photoUrls", String[].class);
+        this.tags = response.jsonPath().getObject("tags", Tag[].class);
+        this.status = response.jsonPath().getString("status");
+
         return response;
     }
 
-    public void setResponse(Response response) {
-        this.response = response;
-    }
-
-    public RequestSpecification getRequest() {
-        return request;
-    }
-
-    public void setRequest(RequestSpecification request) {
-        this.request = request;
-    }
-
-    public int id;
-    public Category category;
-    public String name;
-    public ArrayList<String> photoUrls;
-    public ArrayList<Tag> tags;
-    public String status;
-    Response response;
-    RequestSpecification request;
-    public class Category{
-        public int id;
-        public String name;
-    }
-
-
-
-    public class Tag{
-        public int id;
-        public String name;
-    }
 }

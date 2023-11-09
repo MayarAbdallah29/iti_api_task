@@ -1,22 +1,56 @@
 package requests;
 
-import apiconfig.HeaderConfig;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static base.Data.PET;
 
-public class UserPet {
-    HeaderConfig headers = new HeaderConfig();
-    public int getId() {
+public class PetRequest {
+    private long id;
+    private Category category;
+    private String name;
+    private List<String> photoUrls;
+    private List<Tag> tags;
+    private String status;
+
+    public PetRequest() {
+        // Create a default Category instance
+        this.category = new Category(0, "string");
+    }
+
+    public Response sendCreateRequest(long id, String name, String photoUrl, int tagId, String tagName, String status) {
+        this.id = id;
+        this.name = name;
+        this.photoUrls = new ArrayList<>();
+        this.photoUrls.add(photoUrl);
+        this.tags = new ArrayList<>();
+        this.tags.add(new Tag(tagId, tagName));
+        this.status = status;
+
+        // Send a POST request using RestAssured
+        Response response = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(this)
+                .post(PET);
+
+
+        // Print the response
+        System.out.println("Response Status Code: " + response.getStatusCode());
+        System.out.println("Response Body: " + response.getBody().asString());
+        return response;
+    }
+
+    // Category and Tag classes remain the same
+
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -36,19 +70,19 @@ public class UserPet {
         this.name = name;
     }
 
-    public ArrayList<String> getPhotoUrls() {
+    public List<String> getPhotoUrls() {
         return photoUrls;
     }
 
-    public void setPhotoUrls(ArrayList<String> photoUrls) {
+    public void setPhotoUrls(List<String> photoUrls) {
         this.photoUrls = photoUrls;
     }
 
-    public ArrayList<Tag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<Tag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 
@@ -60,52 +94,64 @@ public class UserPet {
         this.status = status;
     }
 
-    public Response getResponse() {
-        return response;
-    }
+    public static class Category {
+        private long id;
+        private String name;
 
-    public void setResponse(Response response) {
-        this.response = response;
-    }
+        public Category() {
+        }
 
-    public RequestSpecification getRequest() {
-        return request;
-    }
-
-    public void setRequest(RequestSpecification request) {
-        this.request = request;
-    }
-
-    public int id;
-    public Category category;
-    public String name;
-    public ArrayList<String> photoUrls;
-    public ArrayList<Tag> tags;
-    public String status;
-    Response response;
-    RequestSpecification request;
-    public static  class Category {
-        public int id;
-        public String name;
-
-        public Category(int id, String name) {
+        public Category(long id, String name) {
             this.id = id;
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
             this.name = name;
         }
     }
 
+    public static class Tag {
+        private long id;
+        private String name;
 
-    public static class Tag{
-        public int id;
-        public String name;
-    public Tag(int id , String name){
-        this.id = id;
-        this.name = name;
+        public Tag() {
+        }
 
+        public Tag(long id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
     }
-    }
-
-    public static Response sendCreateRequest(int id, String name, String photoUrl, int tagId, String tagName, String status) {
+    public Response sendUpdateRequest(long id, String name, String photoUrl, int tagId, String tagName, String status) {
         this.id = id;
         this.name = name;
         this.photoUrls = new ArrayList<>();
@@ -115,10 +161,10 @@ public class UserPet {
         this.status = status;
 
         // Send a POST request using RestAssured
-         response = RestAssured.given().log().all()
-                .headers(headers.defaultHeaders())
+        Response response = RestAssured.given()
+                .contentType(ContentType.JSON)
                 .body(this)
-                .post(PET);
+                .put(PET);
 
 
         // Print the response
